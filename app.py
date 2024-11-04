@@ -32,7 +32,7 @@ st.title("Search publications by year and keywords")
 # Suwaki do wyboru zakresu lat
 year_range = st.slider(
     "Select a range of publication years:",
-    min_value=1900,
+    min_value=1970,
     max_value=2024,
     value=(2000, 2024),
     step=1,

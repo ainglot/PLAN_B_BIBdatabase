@@ -3,26 +3,17 @@ import sqlite3
 import pandas as pd
 
 # Funkcja do wyszukiwania danych w bazie SQLite
-def search_by_criteria(year_range, keywords):
+def search_by_criteria(year_range, research_problem):
     conn = sqlite3.connect('PLAN_B.db')  # Połącz z bazą danych SQLite
     min_year, max_year = year_range
-    LP = 0
-    NP = 0
-    if keywords == "light pollution":
-        LP = 1
-    elif keywords == "noise pollution":
-        NP = 1
-    else:
-        LP = 1
-        NP = 1
     query = """
     SELECT id, title, author, year, abstract, doi, entry_type, keywords 
     FROM Bibliografia 
     WHERE year BETWEEN ? AND ? 
-    AND lightPollution = ? AND noisePollution = ?
+    AND research_problem = ?
     """
-    keyword_filter = f"%{keywords}%"
-    df = pd.read_sql_query(query, conn, params=(min_year, max_year, LP, NP))
+    keyword_filter = f"%{research_problem}%"
+    df = pd.read_sql_query(query, conn, params=(min_year, max_year, keyword_filter))
     conn.close()
     return df
 
@@ -39,7 +30,7 @@ year_range = st.slider(
 )
 
 # Pole wyboru dla słów kluczowych
-keyword_options = ["light pollution", "noise pollution", "light and noise pollution"]
+keyword_options = ["LPMeasures", "LPMitigation", "NPMeasures", "NPMitigation"]
 selected_keyword = st.selectbox("Select a keyword to filter by:", keyword_options)
 
 # Przycisk do uruchomienia wyszukiwania

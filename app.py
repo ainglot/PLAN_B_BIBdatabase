@@ -12,8 +12,8 @@ def search_by_criteria(year_range, research_problem):
     WHERE year BETWEEN ? AND ? 
     AND research_problem = ?
     """
-    keyword_filter = f"%{research_problem}%"
-    df = pd.read_sql_query(query, conn, params=(min_year, max_year, keyword_filter))
+    # keyword_filter = f"%{research_problem}%"
+    df = pd.read_sql_query(query, conn, params=(min_year, max_year, research_problem))
     conn.close()
     return df
 

@@ -6,14 +6,23 @@ import pandas as pd
 def search_by_criteria(year_range, keywords):
     conn = sqlite3.connect('PLAN_B.db')  # Połącz z bazą danych SQLite
     min_year, max_year = year_range
+    LP = 0
+    NP = 0
+    if keywords == "light pollution":
+        LP = 1
+    elif keywords == "noise pollution":
+        NP = 1
+    else:
+        LP = 1
+        NP = 1
     query = """
     SELECT id, title, author, year, abstract, doi, entry_type, keywords 
     FROM Bibliografia 
     WHERE year BETWEEN ? AND ? 
-    AND keywords LIKE ?
+    AND lightPollution = ? AND noisePollution = ?
     """
     keyword_filter = f"%{keywords}%"
-    df = pd.read_sql_query(query, conn, params=(min_year, max_year, keyword_filter))
+    df = pd.read_sql_query(query, conn, params=(min_year, max_year, LP, NP))
     conn.close()
     return df
 

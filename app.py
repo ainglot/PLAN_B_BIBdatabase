@@ -48,7 +48,7 @@ if st.button("Search"):
     results = search_by_criteria(year_range, selected_keyword)
     
     # Wyświetlanie liczby wyselekcjonowanych rekordów
-    st.write(f"Number of publications found: {len(results)}")
+    st.write(f"**Number of publications found: {len(results)}**")
     
     # Nowe okno
     with st.expander("Search Results", expanded=True):

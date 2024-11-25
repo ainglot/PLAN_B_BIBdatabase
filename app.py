@@ -16,14 +16,14 @@ def search_by_criteria(year_range, research_problem, keywords):
         keyword_placeholders = None
         keyword_params = []
 
-    # Tworzenie zapytania SQL z opcjonalnym filtrem dla research_problem
+    # Budowanie zapytania SQL w zależności od wybranego research_problem
     if research_problem == "ALL":
         query = """
         SELECT id, title, author, year, abstract, doi, entry_type, keywords 
         FROM Bibliografia 
         WHERE year BETWEEN ? AND ?
         """
-        params = (min_year, max_year)
+        params = [min_year, max_year]
     else:
         query = """
         SELECT id, title, author, year, abstract, doi, entry_type, keywords 
@@ -31,16 +31,22 @@ def search_by_criteria(year_range, research_problem, keywords):
         WHERE year BETWEEN ? AND ? 
         AND research_problem = ?
         """
-        params = (min_year, max_year, research_problem)
-    
+        params = [min_year, max_year, research_problem]
+
     # Dodanie filtru słów kluczowych (jeśli wpisano słowa kluczowe)
     if keyword_placeholders:
         query += f" AND ({keyword_placeholders})"
-        params.extend(keyword_params)
-    
+        params += keyword_params  # Użycie operatora `+=`, który jest bezpieczniejszy
+
     # Wykonanie zapytania SQL
-    df = pd.read_sql_query(query, conn, params=params)
-    conn.close()
+    try:
+        df = pd.read_sql_query(query, conn, params=params)
+    except Exception as e:
+        st.error(f"An error occurred while querying the database: {e}")
+        return pd.DataFrame()
+    finally:
+        conn.close()
+    
     return df
 
 # Interfejs aplikacji
